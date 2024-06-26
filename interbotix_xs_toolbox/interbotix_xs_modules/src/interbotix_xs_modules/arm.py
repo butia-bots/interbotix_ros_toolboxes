@@ -48,7 +48,8 @@ class InterbotixArmXSInterface(object):
     arm_pose = {
         "Sleep": [0, -1.88, 1.5, 0.8, 0],
         "PrePick": [-0.0015, -0.0322, 1.3023, -1.3268, 0.07669],
-        "Home": [0, 0, 0, 0, 0]
+        "Home": [0, 0, 0, 0, 0],
+        "PrePickUp": [-0.02454369328916073, 1.6137478351593018, -0.04141748324036598, 0.09357283264398575, -0.04908738657832146]
     }
 
     def __init__(self, core, robot_model, group_name, moving_time=2.0, accel_time=0.3, arm_pose=arm_pose):
