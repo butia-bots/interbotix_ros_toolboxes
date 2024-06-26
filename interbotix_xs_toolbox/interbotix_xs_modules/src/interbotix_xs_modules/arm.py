@@ -37,8 +37,24 @@ class InterbotixManipulatorXS(object):
 ### @param accel_time - time [s] it should take for all joints in the arm to accelerate/decelerate to/from max speed
 class InterbotixArmXSInterface(object):
 
-    def __init__(self, core, robot_model, group_name, moving_time=2.0, accel_time=0.3):
+    ''' 
+        This are the pre saved poses for the arm. When call the state Move2Target it is necessary to pass 
+        a value corresponding to the arm pose desired. The pose passed there should be declared here in arm_pose dict. 
+        After this, when we call the InterbotixManipulatorXS to get the arm like bot.arm ... 
+        we can call the function go_to_desired_pose and pass the desire pose.
+    '''
+
+    # joint_order: [waist, shoulder, elbow, wrist_angle, wrist_rotate]
+    arm_pose = {
+        "Sleep": [0, -1.88, 1.5, 0.8, 0],
+        "PrePick": [-0.0015, -0.0322, 1.3023, -1.3268, 0.07669],
+        "Home": [0, 0, 0, 0, 0]
+    }
+
+    def __init__(self, core, robot_model, group_name, moving_time=2.0, accel_time=0.3, arm_pose=arm_pose):
         self.core = core
+        self.arm_pose = arm_pose
+        # print("\n\n ARM_POSE \n\n", self.arm_pose)
         self.group_info = self.core.srv_get_info("group", group_name)
         if (self.group_info.profile_type != "time"):
             rospy.logerr("Please set the group's 'profile type' to 'time'.")
@@ -143,6 +159,16 @@ class InterbotixArmXSInterface(object):
             return True
         else:
             return False
+        
+    ### @brief Command arm to the desired pre saved pose
+    ### @param pose_name - pose name related to pre saved joint_positions [string]
+    ### @param moving_time - duration in seconds that the robot should move
+    ### @param accel_time - duration in seconds that that robot should spend accelerating/decelerating (must be less than or equal to half the moving_time)
+    ### @param blocking - whether the function should wait to return control to the user until the robot finishes moving
+    ### @return <bool> - True if position was commanded; False if it wasn't due to being outside limits
+    def go_to_desired_pose(self, pose_name, moving_time=None, accel_time=None, blocking=True):
+        self.publish_positions(self.arm_pose[pose_name], moving_time, accel_time, blocking)
+
 
     ### @brief Command the arm to go to its Home pose
     ### @param moving_time - duration in seconds that the robot should move
@@ -156,7 +182,7 @@ class InterbotixArmXSInterface(object):
     ### @param accel_time - duration in seconds that that robot should spend accelerating/decelerating (must be less than or equal to half the moving_time)
     ### @param blocking - whether the function should wait to return control to the user until the robot finishes moving
     def go_to_sleep_pose(self, moving_time=None, accel_time=None, blocking=True):
-        self.publish_positions(self.group_info.joint_sleep_positions, moving_time, accel_time, blocking)
+        self.publish_positions(self.arm_pose['Sleep'], moving_time, accel_time, blocking)
 
     ### @brief Command a single joint to a desired position
     ### @param joint_name - name of the joint to control
