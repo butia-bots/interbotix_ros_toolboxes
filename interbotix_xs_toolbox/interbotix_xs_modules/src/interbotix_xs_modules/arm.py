@@ -47,6 +47,7 @@ class InterbotixArmXSInterface(object):
     # joint_order: [waist, shoulder, elbow, wrist_angle, wrist_rotate]
     arm_pose = {
         "Sleep": [0, -1.88, 1.5, 0.8, 0],
+        "Sleep_Manip": [0, -1.88, 1.5, 0.27458256483078003, 0],
         "PrePick": [-0.0015, -0.0322, 1.3023, -1.3268, 0.07669],
         "Home": [0, 0, 0, 0, 0],
         "PrePickUp": [-0.02454369328916073, 1.6137478351593018, -0.04141748324036598, 0.09357283264398575, -0.04908738657832146]
