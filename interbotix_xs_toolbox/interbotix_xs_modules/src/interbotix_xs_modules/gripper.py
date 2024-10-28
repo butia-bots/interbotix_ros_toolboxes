@@ -24,7 +24,7 @@ class InterbotixGripperXS(object):
 ### @param gripper_pressure_upper_limit - largest 'effort' that should be applied to the gripper if gripper_pressure is set to 1; it should be low enough that the motor doesn't 'overload' when gripping an object for a few seconds (~350 PWM or ~900 mA)
 class InterbotixGripperXSInterface(object):
 
-    def __init__(self, core, gripper_name, gripper_pressure=0.5, gripper_pressure_lower_limit=150, gripper_pressure_upper_limit=350):
+    def __init__(self, core, gripper_name, gripper_pressure=1, gripper_pressure_lower_limit=150, gripper_pressure_upper_limit=450):
         self.core = core
         gripper_info = self.core.srv_get_info("single", gripper_name)
         if (gripper_info.mode != "current" and gripper_info.mode != "pwm"):
@@ -60,8 +60,10 @@ class InterbotixGripperXSInterface(object):
         self.gripper_command.cmd = effort
         with self.core.js_mutex:
             gripper_pos = self.core.joint_states.position[self.left_finger_index]
+        print('antes do if')
         if ((self.gripper_command.cmd > 0 and gripper_pos < self.left_finger_upper_limit) or
             (self.gripper_command.cmd < 0 and gripper_pos > self.left_finger_lower_limit)):
+            print(self.gripper_command)
             self.core.pub_single.publish(self.gripper_command)
             self.gripper_moving = True
             rospy.sleep(delay)

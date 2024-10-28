@@ -135,7 +135,8 @@ class InterbotixRobotXSCore(object):
     ### @param joint_name - the name of the motor to command
     ### @param command - desired command
     def robot_write_joint_command(self, joint_name, command):
-        msg = JointSingleCommand(joint_name, command);
+        msg = JointSingleCommand(joint_name, command)
+        print(msg)
         self.pub_single.publish(msg)
 
     ### @brief Command a trajectory of positions or velocities to a single motor or a group of motors
